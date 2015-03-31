@@ -111,7 +111,7 @@ int read_fasta_record(ifstream &fasta_file, vector <fasta_record> &record)
 
 int main(int argc, char* argv[])
 {
-	int i, end, num_seqs, count, seq_length;
+	int i, end, num_seqs, count, seq_length, spp_abbr_length;
 	string directory_name, base_file_name, fasta_file_name, out_file_name, out_dir_name;
 	ifstream fasta_file;
 	ofstream out_file;
@@ -121,11 +121,9 @@ int main(int argc, char* argv[])
 	string tempstring1, tempstring2, query;
 	stringstream ss;
 
-	/*ss << _wgetcwd;
-	ss >> directory_name;*/
-	directory_name = "E:\\ubuntushare\\orthomcl_dir\\groups\\";
-	base_file_name = "ovary1000";//"default";//
-	out_dir_name = "E:\\ubuntushare\\orthomcl_dir\\paml\\";//directory_name;
+	directory_name = "";
+	base_file_name = "default";
+	out_dir_name = directory_name;
 
 	if (argc == 1)
 	{
@@ -140,6 +138,10 @@ int main(int argc, char* argv[])
 			cout << "-h:\tPrint help message\n";
 			cout << "no arguments:\tinteractive mode\n";
 			return 0;
+		}
+		if (query == "I" || query == "i")
+		{
+			interactivemode = true;
 		}
 	}
 
@@ -171,31 +173,32 @@ int main(int argc, char* argv[])
 			out_dir_name = tempstring2;
 	}
 
+	
+	if (interactivemode)
+	{
+		cout << "Input base file name:\n";
+		cin >> base_file_name;
+		cout << "Do you want to provide an input directory? Y or N\n";
+		cin >> tempstring1;
+		if (tempstring1 == "Y" | tempstring1 == "y")
+		{
+			cout << "Enter desired input directory:\t";
+			cin >> directory_name;
+		}
+		cout << "Do you want to provide an output directory? Y or N\n";
+		cin >> tempstring1;
+		if (tempstring1 == "Y" | tempstring1 == "y")
+		{
+			cout << "Enter desired output directory:\t";
+			cin >> out_dir_name;
+		}
+	}
+
 	if (base_file_name == "default")
 	{
 		cout << "\nBase file name (e.g. ovary1000)\n";
 		cin >> base_file_name;
 		interactivemode = true;
-	}
-
-	if (interactivemode)
-	{
-		cout << "Input base file name:\n";
-		cin >> base_file_name;
-		cout << "Default input directory is:\t" << directory_name << ".\nIs that acceptable? Y or N\n";
-		cin >> tempstring1;
-		if (tempstring1 == "N" | tempstring1 == "n")
-		{
-			cout << "Enter desired input directory:\t";
-			cin >> directory_name;
-		}
-		cout << "Default output directory is:\t" << out_dir_name << ".\nIs that acceptable? Y or N\n";
-		cin >> tempstring1;
-		if (tempstring1 == "N" | tempstring1 == "n")
-		{
-			cout << "Enter desired input directory:\t";
-			cin >> out_dir_name;
-		}
 	}
 
 	cout << "\n\nBase file name:\t" << base_file_name;
@@ -218,7 +221,10 @@ int main(int argc, char* argv[])
 	cout << "\n\nProceeding...\n";
 
 	ss.str(string());
-	ss << directory_name << base_file_name << ".fasta";
+	if (directory_name == "")
+		ss << base_file_name << ".fasta";
+	else
+		ss << directory_name << base_file_name << ".fasta";
 	fasta_file_name = ss.str();
 	fasta_file.open(fasta_file_name);
 	FileTest(fasta_file, fasta_file_name);
@@ -243,8 +249,15 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
+	if (protein[0].seq_id.substr(3, 1) == "|")
+		spp_abbr_length = 3;
+	else
+		spp_abbr_length = 4;
 	ss.str(string());
-	ss << out_dir_name << base_file_name << ".paml";
+	if (out_dir_name == "")
+		ss << base_file_name << ".paml";
+	else
+		ss << out_dir_name << base_file_name << ".paml";
 	out_file_name = ss.str();
 	cout << "Writing to file " << out_file_name << '\n';
 	ss.str(string());
@@ -254,7 +267,7 @@ int main(int argc, char* argv[])
 	{
 		if (count == 0)
 			out_file << num_seqs << " " << protein[i].sequence.length();
-		out_file << '\n' << protein[i].seq_id << "  " << protein[i].sequence;
+		out_file << '\n' << protein[i].seq_id.substr(0, spp_abbr_length) << "  " << protein[i].sequence;
 	}
 	out_file.close();	
 
