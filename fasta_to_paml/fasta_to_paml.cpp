@@ -232,9 +232,9 @@ int main(int argc, char* argv[])
 	fasta_file.close();
 	cout << num_seqs << " sequences found\n";
 	seq_length = protein[0].sequence.length();
-	for (i = 0; i < num_seqs; i++)//make sure all the sequences are the same length
+	for (i = 0; i < num_seqs; i++)
 	{
-		if (seq_length != protein[i].sequence.length())
+		if (seq_length != protein[i].sequence.length())//make sure all the sequences are the same length
 		{
 			cout << fasta_file_name << ":\tNot all sequences are the same length! Cannot write in PAML format. Exiting program.\n";
 			if (interactivemode)
@@ -248,11 +248,23 @@ int main(int argc, char* argv[])
 				return 0;
 			}
 		}
+		for (size_t t = 0; t < protein[i].sequence.size()-3; t=t+3)
+		{
+			if (protein[i].sequence.substr(t, t + 3) == "TAG" || protein[i].sequence.substr(t, t + 3) == "tag" ||
+				protein[i].sequence.substr(t, t + 3) == "TAA" || protein[i].sequence.substr(t, t + 3) == "taa" ||
+				protein[i].sequence.substr(t, t + 3) == "TGA" ||protein[i].sequence.substr(t, t + 3) == "tga")//and remove stop codons
+			{
+				protein[i].sequence.replace(t, 3, "???");
+				cout << protein[i].seq_id << " had stop codon.\n";
+			}
+		}
+		
 	}
 	if (protein[0].seq_id.substr(3, 1) == "|")
 		spp_abbr_length = 3;
 	else
 		spp_abbr_length = 4;
+	
 	ss.str(string());
 	if (out_dir_name == "")
 		ss << base_file_name << ".paml";
@@ -268,6 +280,7 @@ int main(int argc, char* argv[])
 		if (count == 0)
 			out_file << num_seqs << " " << protein[i].sequence.length();
 		out_file << '\n' << protein[i].seq_id.substr(0, spp_abbr_length) << "  " << protein[i].sequence;
+		count++;
 	}
 	out_file.close();	
 
