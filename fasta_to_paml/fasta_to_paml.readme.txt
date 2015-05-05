@@ -1,0 +1,19 @@
+fasta_to_paml README
+//Author: Sarah P. Flanagan
+//Date: 30 March 2015
+Purpose: Take a fasta file and convert it to a paml file. 
+Usage:
+This program can be run in either intreactive mode or on the command line 
+Convert fasta file format to input format for PAML (./fasta_to_paml):\n";
+-b: Base file name (e.g. ovary1000)
+-d: Direcotry name (include path)
+-o: Output Directory name and path (if not given, assumed same as input directory)
+-h: Print help message
+no arguments: interactive mode
+
+Provide the file with a base file name and the directory name where input files are located. 
+If no output directory is provided, it is assumed to be the same as the input directory.
+
+For example:
+
+./fasta_to_paml -b ovary1000 -d /home/orthomcl_dir/fastaFiles -o /home/orthomcl_dir/paml/

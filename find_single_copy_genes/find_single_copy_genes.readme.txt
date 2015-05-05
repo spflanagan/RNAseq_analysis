@@ -1,0 +1,27 @@
+find_single_copy_genes README
+//Author: Sarah P. Flanagan
+//Date: 31 March 2015
+Purpose: Read in either a list of .fasta files or .paml files and print out a list of those files that have single copy orthologs. 
+
+Usage:
+This program can be run in either intreactive mode or on the command line 
+Find orthologs with single copy genes (./find_single_copy_genes):\n;
+-i: Input list (include path)
+-o: Output list (include path)
+-d: Directory containing sequence files listed in the input file
+-p: Add this flag if the sequences are in paml format instead of fasta. Default is fasta.
+-h: Print help message
+no arguments: interactive mode
+
+This is intended to search through all fasta or paml files in a list (-i flag, "input list") to identify all of those containing only single-copy orthologs (-o, "output list"). 
+Provide an input list, and output list name, and a directory path containing sequence files. 
+
+The program will read either fasta (default) or paml files. If you want to search paml files, add the -p flag.
+
+For example:
+
+./find_single_copy_genes -i /home/fasta_list.txt -o /home/single_copy_list.txt -d /home/orthomcl_dir/output/
+
+OR
+
+./find_single_copy_genes -i /home/paml_list.txt -o /home/single_copy_list.txt -d /home/orthomcl_dir/output/ -p

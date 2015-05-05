@@ -1,0 +1,21 @@
+om_groups_to_fasta README
+//Author: Sarah P. Flanagan
+//Date: 27 March 2015
+Purpose: Take the groups.txt file output by orthomcl and pull out all of the sequences 
+Usage:
+(I)nteractive or (H)elp?
+Convert OrthoMCL 'groups.txt' output to fasta (./om_groups_to_fasta)
+Converts orthomcl output to fasta format
+-g: Groups file, including path
+-f: Fasta file name, including path. Can provide multiples, but must be separated by commas
+-n: If this is the original nucleotide file without corrected headers, follow -n flag with species code. If it has the appropriate header, input false
+-o: output directory name
+-h: Output the usage message
+no arguments: interactive mode
+
+This program creates fasta files from the groups.txt file output by orthomcl. 
+You must tell the program if the input nucleotide file(s) (-f flag) have the corrected header, and if they do, provide the species code.
+
+For example:
+
+./om_groups_to_fasta -g home/orthomcl_dir/groups.txt -f /home/orthomcl_dir/compliantFasta/cam.fasta -n cam -o /home/orthomcl_dir/output/

@@ -3,7 +3,7 @@
 //Purpose: Read in either a list of .fasta files or .paml files and print out a list of those files that have single copy orthologs. 
 //Usage:
 //This program can be run in either intreactive mode or on the command line 
-//Convert fasta file format to input format for PAML (./fasta_to_paml):\n";
+//Find orthologs with single copy genes (./find_single_copy_genes):\n";
 //-i: Input list (include path)
 //-o: Output list (include path)
 //-d: Directory containing sequence files listed in the input file
@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
 		cin >> query;
 		if (query == "H" || query == "h")
 		{
-			cout << "\nConvert fasta file format to input format for PAML (./fasta_to_paml):\n";
+			cout << "\nFind orthologs with single copy genes (./find_single_copy_genes):\n";
 			cout << "-i:\tInput list (include path)\n";
 			cout << "-o:\tOutput list (include path)\n";
 			cout << "-d:\tProvide directory for sequences files in input list\n";
@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
 		tempstring1 = argv[1];
 		if (tempstring1 == "-h")
 		{
-			cout << "\nConvert fasta file format to input format for PAML (./fasta_to_paml):\n";
+			cout << "\nFind orthologs with single copy genes (./find_single_copy_genes):\n";
 			cout << "-i:\tInput list (include path)\n";
 			cout << "-o:\tOutput list (include path)\n";
 			cout << "-d:\tProvide directory for sequences files in input list\n";
