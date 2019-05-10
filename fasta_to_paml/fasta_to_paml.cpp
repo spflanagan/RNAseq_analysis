@@ -118,6 +118,7 @@ int main(int argc, char* argv[])
 	vector <fasta_record> protein;
 	string seq_name, line, line2;
 	bool interactivemode = false;
+	bool convert_name = false;
 	string tempstring1, tempstring2, query;
 	stringstream ss;
 
@@ -135,6 +136,7 @@ int main(int argc, char* argv[])
 			cout << "-b:\tBase file name (e.g. ovary1000)\n";
 			cout << "-d:\tInput Directory name (include path). If not provided, the files will write to the directory where this program is saved.\n";
 			cout << "-o:\tOutput Directory name and path (if not given, assumed same as input directory)\n";
+			cout << "-n:\tConvert species names to shorter strings (true or false, default is false)\n";
 			cout << "-h:\tPrint help message\n";
 			cout << "no arguments:\tinteractive mode\n";
 			return 0;
@@ -154,6 +156,7 @@ int main(int argc, char* argv[])
 			cout << "-b:\tBase file name (e.g. ovary1000)\n";
 			cout << "-d:\tInput Direcotry name (include path). If not provided, the files will write to the directory where this program is saved.\n";
 			cout << "-o:\tOutput Directory name and path (if not given, assumed same as input directory)\n";
+			cout << "-n:\tConvert species names too shorter strings (true or false, default is false)\n";
 			cout << "-h:\tPrint help message\n";
 			cout << "no arguments:\tinteractive mode\n";
 			return 0;
@@ -171,6 +174,11 @@ int main(int argc, char* argv[])
 			base_file_name = tempstring2;
 		if (tempstring1 == "-o")
 			out_dir_name = tempstring2;
+		if (tempstring1 == "-n")
+		{
+			if(tempstring2 == "true" | tempstring2=="TRUE"| tempstring2=="True"| tempstring2=="T"| tempstring2=="t")	
+				convert_name = true; // defaults to false
+		}
 	}
 
 	
@@ -192,6 +200,11 @@ int main(int argc, char* argv[])
 			cout << "Enter desired output directory:\t";
 			cin >> out_dir_name;
 		}
+		cout << "Do you want the species names to be converted to shorter strings? Y or N\n";
+		if (tempstring1 == "Y" | tempstring1 == "y")
+		{
+			convert_name = true;
+		}
 	}
 
 	if (base_file_name == "default")
@@ -204,6 +217,8 @@ int main(int argc, char* argv[])
 	cout << "\n\nBase file name:\t" << base_file_name;
 	cout << "\nInput Directory name:\t" << directory_name;
 	cout << "\nOutput Directory name:\t" << out_dir_name;
+	if(convert_name)
+		cout<<"\nSpecies names will be converted.";
 
 	if (interactivemode)
 	{
@@ -232,6 +247,18 @@ int main(int argc, char* argv[])
 	fasta_file.close();
 	cout << num_seqs << " sequences found\n";
 	seq_length = protein[0].sequence.length();
+	int adj_length = 0;
+	if(seq_length % 3 != 0)
+	{
+		cout << "Sequences have " << seq_length << "bps, which is not divisible by 3!\n";
+		if(((seq_length)-1) % 3 !=0)
+			adj_length = 1;
+		else if(((seq_length)-2) % 3 !=0)
+			adj_length = 2;
+		else
+			cout << "Sequences could not be adjusted/n";
+
+	}
 	for (i = 0; i < num_seqs; i++)
 	{
 		if (seq_length != protein[i].sequence.length())//make sure all the sequences are the same length
@@ -248,11 +275,15 @@ int main(int argc, char* argv[])
 				return 0;
 			}
 		}
-		for (size_t t = 0; t < protein[i].sequence.size()-3; t=t+3)
+		if(adj_length > 0) // then we need to remove the last 1 or 2 characters
+		{
+			protein[i].sequence = protein[i].sequence.substr(0, seq_length - adj_length);
+		}
+		for (size_t t = 0; t < protein[i].sequence.length()-3; t=t+3)
 		{
 			if (protein[i].sequence.substr(t, t + 3) == "TAG" || protein[i].sequence.substr(t, t + 3) == "tag" ||
 				protein[i].sequence.substr(t, t + 3) == "TAA" || protein[i].sequence.substr(t, t + 3) == "taa" ||
-				protein[i].sequence.substr(t, t + 3) == "TGA" ||protein[i].sequence.substr(t, t + 3) == "tga")//and remove stop codons
+				protein[i].sequence.substr(t, t + 3) == "TGA" || protein[i].sequence.substr(t, t + 3) == "tga")//and remove stop codons
 			{
 				protein[i].sequence.replace(t, 3, "???");
 				cout << protein[i].seq_id << " had stop codon.\n";
@@ -260,6 +291,7 @@ int main(int argc, char* argv[])
 		}
 		
 	}
+	cout << "Sequences are " << seq_length << " basepairs long.\n";
 	if (protein[0].seq_id.substr(3, 1) == "|")
 		spp_abbr_length = 3;
 	else
@@ -279,7 +311,10 @@ int main(int argc, char* argv[])
 	{
 		if (count == 0)
 			out_file << num_seqs << " " << protein[i].sequence.length();
-		out_file << '\n' << protein[i].seq_id.substr(0, spp_abbr_length) << "  " << protein[i].sequence;
+		if(convert_name)
+			out_file << '\n' << protein[i].seq_id.substr(0, spp_abbr_length) << "  " << protein[i].sequence;
+		else
+			out_file << '\n' << protein[i].seq_id << "  " << protein[i].sequence;
 		count++;
 	}
 	out_file.close();	
