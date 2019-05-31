@@ -251,13 +251,14 @@ int main(int argc, char* argv[])
 	if(seq_length % 3 != 0)
 	{
 		cout << "Sequences have " << seq_length << "bps, which is not divisible by 3!\n";
-		if(((seq_length)-1) % 3 !=0)
+		if(((seq_length)-1) % 3 ==0)
 			adj_length = 1;
-		else if(((seq_length)-2) % 3 !=0)
-			adj_length = 2;
-		else
-			cout << "Sequences could not be adjusted/n";
 
+		if((seq_length-2) % 3 ==0)
+			adj_length = 2;
+			
+		if(adj_length == 0)
+			cout << "Sequences could not be adjusted/n";
 	}
 	for (i = 0; i < num_seqs; i++)
 	{
@@ -277,13 +278,13 @@ int main(int argc, char* argv[])
 		}
 		if(adj_length > 0) // then we need to remove the last 1 or 2 characters
 		{
-			protein[i].sequence = protein[i].sequence.substr(0, seq_length - adj_length);
+			protein[i].sequence = protein[i].sequence.substr(0, seq_length - adj_length);	
 		}
 		for (size_t t = 0; t < protein[i].sequence.length()-3; t=t+3)
 		{
-			if (protein[i].sequence.substr(t, t + 3) == "TAG" || protein[i].sequence.substr(t, t + 3) == "tag" ||
-				protein[i].sequence.substr(t, t + 3) == "TAA" || protein[i].sequence.substr(t, t + 3) == "taa" ||
-				protein[i].sequence.substr(t, t + 3) == "TGA" || protein[i].sequence.substr(t, t + 3) == "tga")//and remove stop codons
+			if (protein[i].sequence.substr(t, 3) == "TAG" || protein[i].sequence.substr(t, 3) == "tag" ||
+				protein[i].sequence.substr(t, 3) == "TAA" || protein[i].sequence.substr(t, 3) == "taa" ||
+				protein[i].sequence.substr(t, 3) == "TGA" || protein[i].sequence.substr(t, 3) == "tga")//and remove stop codons
 			{
 				protein[i].sequence.replace(t, 3, "???");
 				cout << protein[i].seq_id << " had stop codon.\n";
@@ -291,6 +292,7 @@ int main(int argc, char* argv[])
 		}
 		
 	}
+	seq_length = protein[0].sequence.length();
 	cout << "Sequences are " << seq_length << " basepairs long.\n";
 	if (protein[0].seq_id.substr(3, 1) == "|")
 		spp_abbr_length = 3;
